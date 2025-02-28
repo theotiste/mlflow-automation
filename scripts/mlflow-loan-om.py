@@ -34,7 +34,8 @@ import time
 from pycaret.classification import ClassificationExperiment
 # Configuration MLflow
 #mlflow.set_tracking_uri("http://localhost:5000")
-mlflow.set_tracking_uri("mysql+pymysql://root:X9605man9801pap%40%21theo@mysql-host:3306/mlflow_db?allowPublicKeyRetrieval=true")
+mlflow.set_tracking_uri("mysql+pymysql://root:X9605man9801pap%40%21theo@localhost:3306/mlflow_db?charset=utf8mb4&useSSL=false&allowPublicKeyRetrieval=true")
+
 mlflow.set_experiment("mlflow-automation")
 
 
