@@ -7,7 +7,8 @@ from sklearn.metrics import accuracy_score
 
 # Configuration MLflow
 #mlflow.set_tracking_uri("http://localhost:5000")
-mlflow.set_tracking_uri("mysql+pymysql://root:X9605man9801pap%40%21theo@localhost:3306/mlflow_db?charset=utf8mb4&useSSL=false&allowPublicKeyRetrieval=true")
+mlflow.set_tracking_uri("mysql+pymysql://root:mot_de_passe@localhost:3306/mlflow_db?charset=utf8mb4&ssl_mode=DISABLED&allowPublicKeyRetrieval=true")
+
 
 mlflow.set_experiment("mlflow-automation")
 
