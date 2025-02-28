@@ -33,7 +33,8 @@ import time
 #importation de l'outil d'expérimentation de pycaret
 from pycaret.classification import ClassificationExperiment
 # Configuration MLflow
-mlflow.set_tracking_uri("http://localhost:5000")
+#mlflow.set_tracking_uri("http://localhost:5000")
+mlflow.set_tracking_uri("mysql+pymysql://root:X9605man9801pap%40%21theo@mysql-host:3306/mlflow_db")
 mlflow.set_experiment("mlflow-automation")
 
 
