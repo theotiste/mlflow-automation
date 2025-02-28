@@ -32,7 +32,7 @@ jobs:
         run: cp -r mlruns/ $GITHUB_WORKSPACE/mlruns
   
       - name: Upload MLflow logs as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: mlflow-logs
           path: mlruns/
