@@ -1,0 +1,7 @@
+mlflow
+pycaret
+scikit-learn
+pandas
+numpy
+pymysql
+matplotlib
