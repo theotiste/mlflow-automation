@@ -30,10 +30,11 @@ print(mlflow.__version__)
 
 import mlflow
 import time
+import psycopg2
 #importation de l'outil d'expérimentation de pycaret
 from pycaret.classification import ClassificationExperiment
 # Configuration MLflow
-mlflow.set_tracking_uri("mysql+pymysql://root:X9605man9801pap@!theo@localhost:3306/mlflow_db?charset=utf8mb4&allowPublicKeyRetrieval=true&useSSL=false")
+mlflow.set_tracking_uri("postgresql+psycopg2://postgres:mlflowpass@localhost:5432/mlflow_db")
 mlflow.set_experiment("mlflow-automation")
 
 
