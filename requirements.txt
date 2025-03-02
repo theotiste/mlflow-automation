@@ -5,3 +5,4 @@ pandas
 numpy
 pymysql
 matplotlib
+psycopg2-binary
