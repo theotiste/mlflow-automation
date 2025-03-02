@@ -33,7 +33,7 @@ import time
 #importation de l'outil d'expérimentation de pycaret
 from pycaret.classification import ClassificationExperiment
 # Configuration MLflow
-mlflow.set_tracking_uri("postgresql+psycopg2://postgres:monalisa@localhost:5433/mlflow_db")
+mlflow.set_tracking_uri("postgresql+psycopg2://postgres:mlflowpass@localhost:5432/mlflow_db")
 mlflow.set_experiment("mlflow-automation")
 
 
