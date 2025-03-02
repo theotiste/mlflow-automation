@@ -24,7 +24,22 @@ jobs:
           pip install -r requirements.txt
       - name: Run MLflow Loan RM script
         run: python scripts/mlflow-loan-rm.py
-  
+services:
+  postgres:
+    image: postgres:latest
+    env:
+      POSTGRES_USER: progres
+      POSTGRES_PASSWORD: mlflowpass
+      POSTGRES_DB: mlflow_db
+    ports:
+      - 5432:5432
+    options: >-
+      --health-cmd="pg_isready -U progres"
+      --health-interval=10s
+      --health-timeout=5s
+      --health-retries=5
+      - name: Run MLflow Loan RM script
+        run: python scripts/mlflow-loan-rm.py
       - name: Run MLflow Loan OM script
         run: python scripts/mlflow-loan-om.py
   
