@@ -30,6 +30,7 @@ print(mlflow.__version__)
 
 import mlflow
 import time
+import psycopg2
 #importation de l'outil d'expérimentation de pycaret
 from pycaret.classification import ClassificationExperiment
 # Configuration MLflow
