@@ -4,14 +4,30 @@ on:
   push:
     branches:
       - main
+  pull_request:
 
 jobs:
-  train:
+  train-and-deploy:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: mlflowpass
+          POSTGRES_DB: mlflow_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -22,48 +38,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+
       - name: Run MLflow Loan RM script
         run: python scripts/mlflow-loan-rm.py
-services:
-  postgres:
-    image: postgres:latest
-    env:
-      POSTGRES_USER: progres
-      POSTGRES_PASSWORD: mlflowpass
-      POSTGRES_DB: mlflow_db
-    ports:
-      - 5432:5432
-    options: >-
-      --health-cmd="pg_isready -U progres"
-      --health-interval=10s
-      --health-timeout=5s
-      --health-retries=5
-      - name: Run MLflow Loan RM script
-        run: python scripts/mlflow-loan-rm.py
+
       - name: Run MLflow Loan OM script
         run: python scripts/mlflow-loan-om.py
-  
-      - name: Save MLflow logs
-        run: cp -r mlruns/ $GITHUB_WORKSPACE/mlruns
-  
-      - name: Upload MLflow logs as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: mlflow-logs
-          path: mlruns/
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-     
