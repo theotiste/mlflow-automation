@@ -33,9 +33,9 @@ jobs:
           source ~/miniconda3/etc/profile.d/conda.sh
           conda activate theo_env
           python scripts/mlflow-loan-rm.py
-        shell: bash -l
-
-  register-model:
+        shell: bash -l {0}
+ 
+    register-model:
     runs-on: ubuntu-latest
     needs: train-model  # Exécute après le premier job
 
@@ -48,8 +48,9 @@ jobs:
           source ~/miniconda3/etc/profile.d/conda.sh
           conda activate theo1_env
           python scripts/mlflow-register.py
-        shell: bash -l
-
+        shell: bash -l {0}
+ 
+      
 
   train-and-deploy:
     runs-on: ubuntu-latest
