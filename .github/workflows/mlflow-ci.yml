@@ -7,6 +7,50 @@ on:
   pull_request:
 
 jobs:
+  train-model:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: mlflowpass
+          POSTGRES_DB: mlflow_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Activer theo_env (MLflow 1.30.1)
+        run: |
+          source ~/miniconda3/etc/profile.d/conda.sh
+          conda activate theo_env
+          python scripts/mlflow-loan-rm.py
+        shell: bash -l
+
+  register-model:
+    runs-on: ubuntu-latest
+    needs: train-model  # Exécute après le premier job
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Activer theo1_env (MLflow 2.20.2)
+        run: |
+          source ~/miniconda3/etc/profile.d/conda.sh
+          conda activate theo1_env
+          python scripts/mlflow-register.py
+        shell: bash -l
+
+
   train-and-deploy:
     runs-on: ubuntu-latest
 
