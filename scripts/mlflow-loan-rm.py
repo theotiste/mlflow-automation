@@ -42,8 +42,13 @@ mlflow.set_experiment("mlflow-automation")
 
 
 #chargement des données 
-import pandas as pd
-data = pd.read_csv(r"C:\Users\lucie\mlflow-automation\notebooks\Loan_Data.csv")
+import os
+# Chemin relatif (correct pour GitHub Actions)
+data_path = os.path.join("notebooks", "Loan_Data.csv")
+data = pd.read_csv(data_path)
+
+#import pandas as pd
+#data = pd.read_csv(r"C:\Users\lucie\mlflow-automation\notebooks\Loan_Data.csv")
 #data = pd.read_csv('Loan_Data.csv')
 data.info()
 
