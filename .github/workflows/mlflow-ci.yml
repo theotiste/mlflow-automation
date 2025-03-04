@@ -73,13 +73,13 @@ jobs:
         uses: mamba-org/setup-micromamba@v1
         with:
           micromamba-version: latest
-          environment-name: theo1_env
+          environment-name: theo_env
           create-args: >-
             python=3.9
 
       - name: Installer les dépendances pour optimisation-model
         run: |
-          micromamba activate theo_env
+          micromamba activate theo1_env
           pip install -r requirements-om.txt
         shell: bash -l {0}
 
