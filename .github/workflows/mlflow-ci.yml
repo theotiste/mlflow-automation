@@ -79,7 +79,7 @@ jobs:
 
       - name: Installer les dépendances pour optimisation-model
         run: |
-          micromamba activate theo1_env
+          micromamba activate theo_env
           pip install -r requirements-om.txt
         shell: bash -l {0}
 
