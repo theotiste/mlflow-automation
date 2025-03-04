@@ -50,8 +50,21 @@ jobs:
 
   optimisation-model:
     runs-on: ubuntu-latest
-    needs: recherche-model  # S'exécute après recherche-model
-
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: mlflowpass
+          POSTGRES_DB: mlflow_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+  
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -78,7 +91,21 @@ jobs:
 
   mlflow-register:
     runs-on: ubuntu-latest
-    needs: optimisation-model  # S'exécute après optimisation-model
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: mlflowpass
+          POSTGRES_DB: mlflow_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+    
 
     steps:
       - name: Checkout repository
