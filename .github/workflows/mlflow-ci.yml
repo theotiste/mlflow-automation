@@ -1,5 +1,4 @@
 name: MLflow Training & Deployment
-
 on:
   push:
     branches:
@@ -97,7 +96,7 @@ jobs:
         shell: bash -l {0}
 
 
-   mlflow-register:
+  mlflow-register:
     runs-on: ubuntu-latest
     needs: optimisation-model
     services:
@@ -141,7 +140,7 @@ jobs:
         shell: bash -l {0}
         
 
-   mlflow-results:
+  mlflow-results:
     runs-on: ubuntu-latest
     needs: mlflow-register  # 🔹 Exécute mlflow-results.py après l'enregistrement du modèle
     services:
@@ -175,4 +174,5 @@ jobs:
           source ~/miniconda3/etc/profile.d/conda.sh
           conda activate theo1_env
           python scripts/mlflow-results.py
+        shell: bash -l {0}   
         shell: bash -l {0}
