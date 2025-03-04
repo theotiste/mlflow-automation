@@ -1,4 +1,5 @@
 import mlflow
+import psycopg2
 import mlflow.sklearn
 from mlflow.tracking import MlflowClient
 
