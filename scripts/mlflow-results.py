@@ -6,10 +6,10 @@ def install_module(package):
     try:
         __import__(package)
     except ImportError:
-        print(f"📌 Installation du module {package}...")
+        print(f" Installation du module {package}...")
         subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
-# 🔹 Vérification et installation des modules nécessaires
+#  Vérification et installation des modules nécessaires
 install_module("mlflow")
 install_module("pandas")
 install_module("sqlalchemy")
