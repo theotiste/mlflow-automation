@@ -175,4 +175,4 @@ jobs:
           conda activate theo1_env
           python scripts/mlflow-results.py
         shell: bash -l {0}   
-        shell: bash -l {0}
+       
