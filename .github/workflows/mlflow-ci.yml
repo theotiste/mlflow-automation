@@ -47,3 +47,30 @@ jobs:
           micromamba activate theo_env
           python scripts/mlflow-loan-rm.py
         shell: bash -l {0}
+  mlflow-register:
+    runs-on: ubuntu-latest
+    needs: optimisation-model  # S'exécute après optimisation-model
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Micromamba
+        uses: mamba-org/setup-micromamba@v1
+        with:
+          micromamba-version: latest
+          environment-name: theo1_env
+          create-args: >-
+            python=3.9
+
+      - name: Installer les dépendances pour l'enregistrement MLflow
+        run: |
+          micromamba activate theo1_env
+          pip install -r requirements-register.txt
+        shell: bash -l {0}
+
+      - name: Enregistrer le modèle dans MLflow Registry
+        run: |
+          micromamba activate theo1_env
+          python scripts/mlflow-loan-register.py
+        shell: bash -l {0}
