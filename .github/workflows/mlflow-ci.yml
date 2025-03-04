@@ -79,15 +79,22 @@ jobs:
 
       - name: Installer les dépendances pour optimisation-model
         run: |
-          micromamba activate theo1_env
-          pip install -r requirements-om.txt
+          micromamba activate theo_env
+          pip install -r requirements-rm.txt
         shell: bash -l {0}
 
       - name: Entraîner le modèle (Optimisation Model)
         run: |
+          micromamba activate theo_env
+          python scripts/mlflow-loan-om.py
+        shell: bash -l {0}
+        
+      - name: Enregistrer le modèle (Optimisation Model)
+        run: |
           micromamba activate theo1_env
           python scripts/mlflow-loan-om.py
         shell: bash -l {0}
+
 
   mlflow-register:
     runs-on: ubuntu-latest
