@@ -29,7 +29,7 @@ if experiment:
         model_uri = f"runs:/{run_id}/model"
         model_version = mlflow.register_model(model_uri, MODEL_NAME)
 
-        print(f"Modèle {MODEL _NAME} enregistré avec succès, version : {model_version.version}")
+        print(f"Modèle {MODEL_NAME} enregistré avec succès, version : {model_version.version}")
 
         # 🔹 Passer automatiquement à "Production"
         client.transition_model_version_stage(name=MODEL_NAME, version=model_version.version, stage="Production")
