@@ -6,7 +6,7 @@ from mlflow.tracking import MlflowClient
 mlflow.set_tracking_uri("postgresql+psycopg2://postgres:mlflowpass@localhost:5432/mlflow_db")
 
 # 🔹 Définir le nom du modèle dans MLflow Registry
-MODEL_NAME = "my_model"
+MODEL_NAME = "theo_model"
 
 # 🔹 Initialiser le client MLflow
 client = MlflowClient()
@@ -23,20 +23,20 @@ if experiment:
         best_run = runs[0]  # Sélectionner le meilleur run
         run_id = best_run.info.run_id
 
-        print(f"📌 Enregistrement du modèle depuis le run {run_id}")
+        print(f" Enregistrement du modèle depuis le run {run_id}")
 
         # 🔹 Enregistrer le modèle dans MLflow Model Registry
         model_uri = f"runs:/{run_id}/model"
         model_version = mlflow.register_model(model_uri, MODEL_NAME)
 
-        print(f"✅ Modèle {MODEL_NAME} enregistré avec succès, version : {model_version.version}")
+        print(f"Modèle {MODEL _NAME} enregistré avec succès, version : {model_version.version}")
 
         # 🔹 Passer automatiquement à "Production"
         client.transition_model_version_stage(name=MODEL_NAME, version=model_version.version, stage="Production")
 
-        print(f"🚀 Modèle {MODEL_NAME} (v{model_version.version}) est maintenant en Production !")
+        print(f"Modèle {MODEL_NAME} (v{model_version.version}) est maintenant en Production !")
     else:
-        print("⚠️ Aucun run trouvé dans l'expérience. Vérifie que l'entraînement a bien été exécuté.")
+        print(" Aucun run trouvé dans l'expérience. Vérifie que l'entraînement a bien été exécuté.")
 else:
-    print("⚠️ L'expérience spécifiée n'existe pas dans MLflow.")
+    print(" L'expérience spécifiée n'existe pas dans MLflow.")
 
