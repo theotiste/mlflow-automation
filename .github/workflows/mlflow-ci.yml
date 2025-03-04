@@ -137,3 +137,17 @@ jobs:
           micromamba activate theo1_env
           python scripts/mlflow-loan-register.py
         shell: bash -l {0}
+        
+mlflow-results:
+    runs-on: ubuntu-latest
+    needs: mlflow-register  #  Exécute mlflow-results.py après l'enregistrement du modèle
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Activer theo1_env (MLflow 2.20.2)
+        run: |
+          source ~/miniconda3/etc/profile.d/conda.sh
+          conda activate theo1_env
+          python scripts/mlflow-results.py
+        shell: bash -l {0}
