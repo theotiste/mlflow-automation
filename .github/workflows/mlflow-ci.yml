@@ -97,7 +97,7 @@ jobs:
         shell: bash -l {0}
 
 
-  mlflow-register:
+   mlflow-register:
     runs-on: ubuntu-latest
     needs: optimisation-model
     services:
@@ -140,9 +140,10 @@ jobs:
           python scripts/mlflow-loan-register.py
         shell: bash -l {0}
         
-  mlflow-results:
+
+   mlflow-results:
     runs-on: ubuntu-latest
-    needs: mlflow-register  #  Exécute mlflow-results.py après l'enregistrement du modèle
+    needs: mlflow-register  # 🔹 Exécute mlflow-results.py après l'enregistrement du modèle
     services:
       postgres:
         image: postgres:latest
@@ -162,7 +163,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Activer theo1_env (MLflow 2.20.2)
+      - name: Activer theo1_env et vérifier MLflow
+        run: |
+          source ~/miniconda3/etc/profile.d/conda.sh
+          conda activate theo1_env
+          pip list | grep mlflow || pip install mlflow
+        shell: bash -l {0}
+
+      - name: Exécuter mlflow-results.py
         run: |
           source ~/miniconda3/etc/profile.d/conda.sh
           conda activate theo1_env
