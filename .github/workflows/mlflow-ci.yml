@@ -154,8 +154,8 @@ jobs:
 
       - name: Envoyer le modèle MLflow à Arize AI
         run: |
-          
-
+          micromamba activate theo1_env
+          pip install mlflow     
           python scripts/mlflow-arize.py
         shell: bash -l {0}
 
