@@ -20,12 +20,12 @@ jobs:
           environment-name: theo_env
           create-args: python=3.9 pip
 
-      - name: Installer MLflow, PyCaret et exécuter recherche-model
+      - name: Installer MLflow, PyCaret, psycopg2 et exécuter recherche-model
         shell: bash -l {0}
         run: |
           eval "$(micromamba shell hook --shell=bash)"
           micromamba activate theo_env
-          pip install mlflow==1.30.1 pycaret==3.2.0
+          pip install mlflow==1.30.1 pycaret==3.2.0 psycopg2-binary
           python scripts/mlflow-loan-rm.py
 
   optimisation-model:
@@ -56,12 +56,12 @@ jobs:
           environment-name: theo1_env
           create-args: python=3.9 pip
 
-      - name: Installer MLflow et exécuter mlflow-register
+      - name: Installer MLflow, psycopg2 et exécuter mlflow-register
         shell: bash -l {0}
         run: |
           eval "$(micromamba shell hook --shell=bash)"
           micromamba activate theo1_env
-          pip install mlflow==2.20.2
+          pip install mlflow==2.20.2 psycopg2-binary
           python scripts/mlflow-loan-register.py
 
   arize-upload:
@@ -71,24 +71,4 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Activer theo1_env, installer Arize AI et exécuter l'upload
-        shell: bash -l {0}
-        run: |
-          eval "$(micromamba shell hook --shell=bash)"
-          micromamba activate theo1_env
-          pip install arize
-          python scripts/mlflow-arize.py
-
-  mlflow-results:
-    runs-on: ubuntu-latest
-    needs: arize-upload
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Activer theo1_env et exécuter mlflow-results
-        shell: bash -l {0}
-        run: |
-          eval "$(micromamba shell hook --shell=bash)"
-          micromamba activate theo1_env
-          python scripts/mlflow-results.py
+      - name: Activer theo1_env,
