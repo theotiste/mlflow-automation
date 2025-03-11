@@ -22,7 +22,6 @@ jobs:
 
       - name: Installer les dépendances pour recherche-model
         run: |
-          eval "$(micromamba shell hook --shell=bash)"
           micromamba activate theo_env
           pip install -r requirements-rm.txt
           shell: bash -l {0}
