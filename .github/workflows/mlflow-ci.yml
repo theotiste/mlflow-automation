@@ -148,15 +148,13 @@ jobs:
 
       - name: Installer les dépendances Arize AI
         run: |
-          source ~/miniconda3/etc/profile.d/conda.sh
-          conda activate theo1_env
+          micromamba activate theo1_env
           pip install arize
         shell: bash -l {0}
 
       - name: Envoyer le modèle MLflow à Arize AI
         run: |
-          source ~/miniconda3/etc/profile.d/conda.sh
-          conda activate theo1_env
+          micromamba activate theo1_env
           python scripts/mlflow-arize.py
         shell: bash -l {0}
 
