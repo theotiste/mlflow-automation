@@ -149,13 +149,12 @@ jobs:
       - name: Installer les dépendances Arize AI
         run: |
           micromamba activate theo1_env
-          pip install arize
+          pip install -r requirements-arize.txt
         shell: bash -l {0}
 
       - name: Envoyer le modèle MLflow à Arize AI
         run: |
           micromamba activate theo1_env
-          pip install mlflow     
           python scripts/mlflow-arize.py
         shell: bash -l {0}
 
