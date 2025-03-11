@@ -67,7 +67,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Activer theo1_env, installer Arize AI et exécuter l'upload
-        shell: bash -l {0}  # 🔹 Correction : placé au bon niveau
+        shell: bash -l {0}  # Correction : placé au bon niveau
         run: |
           eval "$(micromamba shell hook --shell=bash)"
           micromamba activate theo1_env
