@@ -138,11 +138,31 @@ jobs:
           micromamba activate theo1_env
           python scripts/mlflow-loan-register.py
         shell: bash -l {0}
-        
+
+  arize-upload:
+    runs-on: ubuntu-latest
+    needs: mlflow-register  #  Exécuter Arize après l'enregistrement du modèle
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Installer les dépendances Arize AI
+        run: |
+          source ~/miniconda3/etc/profile.d/conda.sh
+          conda activate theo1_env
+          pip install arize
+        shell: bash -l {0}
+
+      - name: Envoyer le modèle MLflow à Arize AI
+        run: |
+          source ~/miniconda3/etc/profile.d/conda.sh
+          conda activate theo1_env
+          python scripts/mlflow-arize.py
+        shell: bash -l {0}
 
   mlflow-results:
     runs-on: ubuntu-latest
-    needs: mlflow-register  # 🔹 Exécute mlflow-results.py après l'enregistrement du modèle
+    needs: arize-upload  # Exécute mlflow-results après Arize
     services:
       postgres:
         image: postgres:latest
@@ -157,7 +177,7 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
-  
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -174,5 +194,5 @@ jobs:
           source ~/miniconda3/etc/profile.d/conda.sh
           conda activate theo1_env
           python scripts/mlflow-results.py
-        shell: bash -l {0}   
-       
+        shell: bash -l {0}         
+  
