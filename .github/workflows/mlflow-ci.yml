@@ -20,12 +20,12 @@ jobs:
           environment-name: theo_env
           create-args: python=3.9 pip
 
-      - name: Installer MLflow et exécuter recherche-model
+      - name: Installer MLflow, PyCaret et exécuter recherche-model
         shell: bash -l {0}
         run: |
           eval "$(micromamba shell hook --shell=bash)"
           micromamba activate theo_env
-          pip install mlflow==1.30.1
+          pip install mlflow==1.30.1 pycaret==3.2.0
           python scripts/mlflow-loan-rm.py
 
   optimisation-model:
