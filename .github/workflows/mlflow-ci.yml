@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4  # ✅ Correction : chaque étape a un `uses:` ou `run:`
+        uses: actions/checkout@v4  
 
       - name: Installer Micromamba et créer l'environnement theo_env
         uses: mamba-org/setup-micromamba@v1
@@ -20,11 +20,16 @@ jobs:
           environment-name: theo_env
           create-args: python=3.9 pip
 
-      - name: Installer MLflow, PyCaret, psycopg2 et exécuter recherche-model
+      - name: Installer les dépendances pour recherche-model
         run: |
           eval "$(micromamba shell hook --shell=bash)"
           micromamba activate theo_env
-          pip install mlflow==1.30.1 pycaret==3.2.0 psycopg2-binary
+          pip install -r requirements-rm.txt
+          shell: bash -l {0}
+          
+      - name: Entraîner le modèle (Recherche Model)
+        run: |
+          micromamba activate theo_env
           python scripts/mlflow-loan-rm.py
         shell: bash -l {0}
 
@@ -33,12 +38,30 @@ jobs:
     needs: recherche-model
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4  # ✅ Correction ajoutée ici
+        uses: actions/checkout@v4  
+      - name: Install Micromamba
+        uses: mamba-org/setup-micromamba@v1
+        with:
+          micromamba-version: latest
+          environment-name: theo_env
+          create-args: >-
+            python=3.9
 
-      - name: Activer theo_env et exécuter optimisation-model
+      - name: Installer les dépendances pour optimisation-model
         run: |
-          eval "$(micromamba shell hook --shell=bash)"
           micromamba activate theo_env
+          pip install -r requirements-rm.txt
+        shell: bash -l {0}
+
+      - name: Entraîner le modèle (Optimisation Model)
+        run: |
+          micromamba activate theo_env
+          python scripts/mlflow-loan-om.py
+        shell: bash -l {0}
+        
+      - name: Enregistrer le modèle (Optimisation Model)
+        run: |
+          micromamba activate theo1_env
           python scripts/mlflow-loan-om.py
         shell: bash -l {0}
 
@@ -47,20 +70,25 @@ jobs:
     needs: optimisation-model
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4  # ✅ Correction ajoutée ici
+        uses: actions/checkout@v4
 
-      - name: Installer Micromamba et créer theo1_env
+      - name: Install Micromamba
         uses: mamba-org/setup-micromamba@v1
         with:
           micromamba-version: latest
           environment-name: theo1_env
-          create-args: python=3.9 pip
+          create-args: >-
+            python=3.9
 
-      - name: Installer MLflow, psycopg2 et exécuter mlflow-register
+      - name: Installer les dépendances pour l'enregistrement MLflow
         run: |
-          eval "$(micromamba shell hook --shell=bash)"
           micromamba activate theo1_env
-          pip install mlflow==2.20.2 psycopg2-binary
+          pip install -r requirements-register.txt
+        shell: bash -l {0}
+
+      - name: Enregistrer le modèle dans MLflow Registry
+        run: |
+          micromamba activate theo1_env
           python scripts/mlflow-loan-register.py
         shell: bash -l {0}
 
@@ -69,26 +97,43 @@ jobs:
     needs: mlflow-register
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4  # ✅ Correction ajoutée ici
-
-      - name: Activer theo1_env, installer Arize AI et exécuter l'upload
+        uses: actions/checkout@v4  
+      - name: Installer les dépendances Arize AI
         run: |
-          eval "$(micromamba shell hook --shell=bash)"
           micromamba activate theo1_env
           pip install arize
-          python scripts/mlflow-arize.py
         shell: bash -l {0}
 
+      - name: Envoyer le modèle MLflow à Arize AI
+        run: |
+          micromamba activate theo1_env
+          python scripts/mlflow-arize.py
+        shell: bash -l {0}   
+
+    
   mlflow-results:
     runs-on: ubuntu-latest
     needs: arize-upload
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4  # ✅ Correction ajoutée ici
-
-      - name: Activer theo1_env et exécuter mlflow-results
+        uses: actions/checkout@v4  
+      - name: Install Micromamba
+        uses: mamba-org/setup-micromamba@v1
+        with:
+          micromamba-version: latest
+          environment-name: theo1_env
+          create-args: >-
+            python=3.9   
+      - name: Activer theo1_env et vérifier MLflow
         run: |
-          eval "$(micromamba shell hook --shell=bash)"
+          micromamba activate theo1_env
+          pip list | grep mlflow || pip install mlflow
+        shell: bash -l {0}
+
+      - name: Exécuter mlflow-results.py
+        run: |
           micromamba activate theo1_env
           python scripts/mlflow-results.py
-        shell: bash -l {0}
+        shell: bash -l {0}               
+
+     
