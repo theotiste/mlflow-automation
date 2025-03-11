@@ -1,48 +1,22 @@
-name: MLflow Training & Deployment
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-
 jobs:
   recherche-model:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: mlflowpass
-          POSTGRES_DB: mlflow_db
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U postgres"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Micromamba
+      - name: Installer Micromamba
         uses: mamba-org/setup-micromamba@v1
         with:
           micromamba-version: latest
           environment-name: theo_env
           create-args: >-
             python=3.9
+            mlflow=1.30.1
 
-      - name: Installer les dépendances pour recherche-model
+      - name: Activer theo_env et exécuter recherche-model
         run: |
-          micromamba activate theo_env
-          pip install -r requirements-rm.txt
-        shell: bash -l {0}
-
-      - name: Entraîner le modèle (Recherche Model)
-        run: |
+          eval "$(micromamba shell hook --shell=bash)"
           micromamba activate theo_env
           python scripts/mlflow-loan-rm.py
         shell: bash -l {0}
@@ -50,147 +24,66 @@ jobs:
   optimisation-model:
     runs-on: ubuntu-latest
     needs: recherche-model
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: mlflowpass
-          POSTGRES_DB: mlflow_db
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U postgres"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-  
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Micromamba
-        uses: mamba-org/setup-micromamba@v1
-        with:
-          micromamba-version: latest
-          environment-name: theo_env
-          create-args: >-
-            python=3.9
-
-      - name: Installer les dépendances pour optimisation-model
+      - name: Activer theo_env et exécuter optimisation-model
         run: |
-          micromamba activate theo_env
-          pip install -r requirements-rm.txt
-        shell: bash -l {0}
-
-      - name: Entraîner le modèle (Optimisation Model)
-        run: |
+          eval "$(micromamba shell hook --shell=bash)"
           micromamba activate theo_env
           python scripts/mlflow-loan-om.py
         shell: bash -l {0}
-        
-      - name: Enregistrer le modèle (Optimisation Model)
-        run: |
-          micromamba activate theo1_env
-          python scripts/mlflow-loan-om.py
-        shell: bash -l {0}
-
 
   mlflow-register:
     runs-on: ubuntu-latest
     needs: optimisation-model
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: mlflowpass
-          POSTGRES_DB: mlflow_db
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U postgres"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-    
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install Micromamba
+      - name: Installer Micromamba et créer theo1_env
         uses: mamba-org/setup-micromamba@v1
         with:
           micromamba-version: latest
           environment-name: theo1_env
           create-args: >-
             python=3.9
+            mlflow=2.20.2
+            pip
 
-      - name: Installer les dépendances pour l'enregistrement MLflow
+      - name: Activer theo1_env et exécuter mlflow-register
         run: |
-          micromamba activate theo1_env
-          pip install -r requirements-register.txt
-        shell: bash -l {0}
-
-      - name: Enregistrer le modèle dans MLflow Registry
-        run: |
+          eval "$(micromamba shell hook --shell=bash)"
           micromamba activate theo1_env
           python scripts/mlflow-loan-register.py
         shell: bash -l {0}
 
   arize-upload:
     runs-on: ubuntu-latest
-    needs: mlflow-register  #  Exécuter Arize après l'enregistrement du modèle
+    needs: mlflow-register
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Installer les dépendances Arize AI
+      - name: Activer theo1_env, installer Arize AI et exécuter l'upload
         run: |
+          eval "$(micromamba shell hook --shell=bash)"
           micromamba activate theo1_env
           pip install arize
-        shell: bash -l {0}
-
-      - name: Envoyer le modèle MLflow à Arize AI
-        run: |
-          micromamba activate theo1_env
           python scripts/mlflow-arize.py
         shell: bash -l {0}
 
   mlflow-results:
     runs-on: ubuntu-latest
-    needs: arize-upload  # Exécute mlflow-results après Arize
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: mlflowpass
-          POSTGRES_DB: mlflow_db
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U postgres"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
+    needs: arize-upload
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Activer theo1_env et vérifier MLflow
+      - name: Activer theo1_env et exécuter mlflow-results
         run: |
-          source ~/miniconda3/etc/profile.d/conda.sh
-          conda activate theo1_env
-          pip list | grep mlflow || pip install mlflow
-        shell: bash -l {0}
-
-      - name: Exécuter mlflow-results.py
-        run: |
-          source ~/miniconda3/etc/profile.d/conda.sh
-          conda activate theo1_env
+          eval "$(micromamba shell hook --shell=bash)"
+          micromamba activate theo1_env
           python scripts/mlflow-results.py
-        shell: bash -l {0}         
-  
+        shell: bash -l {0}
