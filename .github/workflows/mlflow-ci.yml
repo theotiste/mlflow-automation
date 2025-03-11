@@ -73,6 +73,7 @@ jobs:
           pip install arize
           python scripts/mlflow-arize.py
         shell: bash -l {0}
+        
  mlflow-results:
     runs-on: ubuntu-latest
     needs: arize-upload
