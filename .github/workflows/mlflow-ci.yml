@@ -1,3 +1,11 @@
+name: MLflow Training & Deployment
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
 jobs:
   recherche-model:
     runs-on: ubuntu-latest
